@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Team {
+  id        Int          @id @default(autoincrement())
+  number    Int          @unique
+  name      String?
+  eventKey  String?
+  entries   ScoutEntry[]
+  matches   MatchTeam[]
+}
+
+model Match {
+  id        Int          @id @default(autoincrement())
+  eventKey  String
+  matchKey  String
+  time      DateTime?
+  teams     MatchTeam[]
+  entries   ScoutEntry[]
+  createdAt DateTime      @default(now())
+
+  @@unique([eventKey, matchKey], name: "event_match")
+}
+
+model MatchTeam {
+  id       Int    @id @default(autoincrement())
+  match    Match  @relation(fields: [matchId], references: [id])
+  matchId  Int
+  team     Team   @relation(fields: [teamId], references: [id])
+  teamId   Int
+  alliance String
+  station  String
+}
+
+model Scout {
+  id        Int          @id @default(autoincrement())
+  name      String       @unique
+  entries   ScoutEntry[]
+  createdAt DateTime      @default(now())
+}
+
+model ScoutEntry {
+  id        Int      @id @default(autoincrement())
+  scout     Scout    @relation(fields: [scoutId], references: [id])
+  scoutId   Int
+  team      Team     @relation(fields: [teamId], references: [id])
+  teamId    Int
+  match     Match    @relation(fields: [matchId], references: [id])
+  matchId   Int
+  payload   Json
+  createdAt DateTime @default(now())
+}
