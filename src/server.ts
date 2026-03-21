@@ -7,6 +7,8 @@ import { scoutRouter } from "./routes/scout.js";
 import { eventRouter } from "./routes/event.js";
 import { teamRouter } from "./routes/team.js";
 import { analysisRouter } from "./routes/analysis.js";
+import syncRoutes from "./routes/sync";
+app.use("/api/sync", syncRoutes);
 
 const app = express();
 
