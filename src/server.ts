@@ -44,6 +44,18 @@ async function start() {
   try {
     // Ensure Prisma connects before server starts
     await prisma.$connect();
+    await db.query(`
+    CREATE TABLE IF NOT EXISTS sync_files (
+    id SERIAL PRIMARY KEY,
+    path TEXT UNIQUE NOT NULL,
+    event_key TEXT,
+    file_type TEXT NOT NULL,
+    timestamp TIMESTAMPTZ NOT NULL,
+    content JSONB NOT NULL
+  );
+`);
+
+
     console.log("Connected to database");
 
     // OPTIONAL: If you want schema sync on every boot (Render Free Tier)
