@@ -33,11 +33,6 @@ app.get("/health", async (_req, res) => {
   }
 });
 
-app.use("/api/scout", scoutRouter);
-app.use("/api/event", eventRouter);
-app.use("/api/team", teamRouter);
-app.use("/api/analysis", analysisRouter);
-
 // -----------------------------
 // Render‑safe startup wrapper
 // -----------------------------
