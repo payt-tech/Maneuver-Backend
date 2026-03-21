@@ -13,9 +13,9 @@ app.use(cors());
 app.use(express.json());
 
 app.use((req, res, next) => {
-  if (req.method !== "GET" && env.API_KEY) {
+  if (req.method !== "GET" && env.MANEUVER_API_KEY) {
     const key = req.headers["x-api-key"];
-    if (key !== env.API_KEY) {
+    if (key !== env.MANEUVER_API_KEY) {
       return res.status(401).json({ error: "Unauthorized" });
     }
   }
@@ -36,6 +36,26 @@ app.use("/api/event", eventRouter);
 app.use("/api/team", teamRouter);
 app.use("/api/analysis", analysisRouter);
 
-app.listen(env.PORT, () => {
-  console.log(`Server listening on ${env.PORT}`);
-});
+// -----------------------------
+// Render‑safe startup wrapper
+// -----------------------------
+async function start() {
+  try {
+    // Ensure Prisma connects before server starts
+    await prisma.$connect();
+    console.log("Connected to database");
+
+    // OPTIONAL: If you want schema sync on every boot (Render Free Tier)
+    // await prisma.$executeRawUnsafe(`SELECT 1`);
+
+    app.listen(env.PORT, () => {
+      console.log(`Server listening on ${env.PORT}`);
+    });
+  } catch (err) {
+    console.error("Failed to start server:", err);
+    process.exit(1);
+  }
+}
+
+start();
+ 
