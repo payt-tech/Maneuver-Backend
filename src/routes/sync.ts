@@ -3,6 +3,22 @@ import db from "../db";
 
 const router = express.Router();
 
+router.get("/download", async (req, res) => {
+  const result = await db.query("SELECT * FROM sync_files ORDER BY timestamp ASC");
+
+  const scouting = [];
+  const pit = [];
+  const scouters = [];
+
+  for (const row of result.rows) {
+    if (row.file_type === "scouting") scouting.push(...row.content);
+    if (row.file_type === "pit") pit.push(...row.content);
+    if (row.file_type === "scouters") scouters.push(...row.content);
+  }
+
+  res.json({ scouting, pit, scouters });
+});
+
 router.post("/upload", async (req, res) => {
   const { eventKey, scoutingData, pitData, scouters, timestamp } = req.body;
 
