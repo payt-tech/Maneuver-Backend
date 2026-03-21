@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { Request, Response, NextFunction } from "express";
 import { env } from "./env.js";
 import { prisma } from "./prisma.js";
 import { scoutRouter } from "./routes/scout.js";
